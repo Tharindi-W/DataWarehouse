@@ -1,0 +1,49 @@
+# Step 1: Import libraries
+import pandas as pd
+
+# Step 2: Read the CSV file into a pandas DataFrame with a different encoding
+file_path = '/content/sample_data/Data_set.csv'
+df = pd.read_csv(file_path, encoding='ISO-8859-1')
+
+# Step 3: Get the column titles
+column_titles = df.columns.tolist()
+print("Column Titles:", column_titles)
+
+# Step 4: Get the number of data rows
+num_rows = df.shape[0]
+print("Number of Data Rows:", num_rows)
+
+# Step 5: Get distinct values and counts for specific columns
+columns_to_check = ['ORDERLINENUMBER', 'STATUS', 'YEAR_ID', 'PRODUCTLINE','POSTALCODE', 'COUNTRY', 'TERRITORY', 'DEALSIZE']
+for column in columns_to_check:
+    distinct_values_counts = df[column].value_counts()
+    print(f"Distinct values and counts for {column}:\n{distinct_values_counts}\n")
+
+# Step 6: Get maximum, minimum, and average values for QUANTITYORDERED and SALES
+max_quantity_ordered = df.loc[df['QUANTITYORDERED'].idxmax()]
+min_quantity_ordered = df.loc[df['QUANTITYORDERED'].idxmin()]
+
+max_sales = df.loc[df['SALES'].idxmax()]
+min_sales = df.loc[df['SALES'].idxmin()]
+
+print("Maximum Quantity Ordered:")
+print(max_quantity_ordered[['ORDERNUMBER', 'PRODUCTCODE', 'QUANTITYORDERED', 'SALES']])
+print("\nMinimum Quantity Ordered:")
+print(min_quantity_ordered[['ORDERNUMBER', 'PRODUCTCODE', 'QUANTITYORDERED', 'SALES']])
+
+print("\nMaximum Sales:")
+print(max_sales[['ORDERNUMBER', 'PRODUCTCODE', 'QUANTITYORDERED', 'SALES']])
+print("\nMinimum Sales:")
+print(min_sales[['ORDERNUMBER', 'PRODUCTCODE', 'QUANTITYORDERED', 'SALES']])
+
+# Step 7: Get distinct deal sizes with customer names
+distinct_deal_sizes = df.groupby('CUSTOMERNAME')['DEALSIZE'].unique()
+print("Distinct Deal Sizes with Customer Names:")
+print(distinct_deal_sizes)
+
+# Step 8: Count distinct customers and product IDs
+distinct_customers_count = df['CUSTOMERNAME'].nunique()
+distinct_product_ids_count = df['PRODUCTCODE'].nunique()
+
+print(f"\nCount of Distinct Customers: {distinct_customers_count}")
+print(f"Count of Distinct Product IDs: {distinct_product_ids_count}")

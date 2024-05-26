@@ -2,91 +2,98 @@
 
 
 Aim
-
-
 To create a comprehensive data warehousing solution capable of effectively managing and processing sample sales data that facilitates seamless reporting and analysis.
 
 
 Objectives
-
-
 1. Data Warehouse Design
 2. Script Development for Table Derivation 
 3. Power BI Dashboard Creation
 
 
 Introduction to the dataset
-
-
 The raw dataset consists of 25 columns, encompassing essential information. In total, there are 2823 entries. The dataset showcases 18 distinct orderline numbers and 6 distinct status categories. Among 2823 orders, 2617 were successfully Shipped. The sales data spans the years 2003 to 2005, covering 7 distinct product lines distributed across 19 countries. Deal sizes are categorized as Medium, Small, and Large. Noteworthy, the maximum Quantity Ordered was for product S12_4675, while the minimum was for S18_2325. The highest sales were attributed to product S18_1749, achieving $14082.8, with the lowest recorded for S32_2509 at $482.13. Furthermore, the dataset comprises 92 unique customers and 109 distinct product IDs. 
 
 
+Data warehouse architecture
+1.Data Sources
+This architecture can ingest data from various sources, including CSV and JSON files, raw data feeds, and cloud providers like AWS, Azure, and Google Cloud. This flexibility allows you to integrate data from a wide range of sources.
+
+2.Data Processing and Storage
+This design use Snowflake as the core data warehouse platform. Snowflake provides a multi-stage approach.
+Staging - Raw data is initially landed in Snowflake's temporary storage for processing.
+Conformed Dimensions - Standardized reference data tables are created to ensure consistency across the warehouse.
+Aggregated Data - Pre-calculated summaries of detailed data are stored in Snowflake views for faster querying.
+
+3.Services
+This layer focuses on data consumption and analysis.:
+Dashboards - Interactive dashboards for visualizing key metrics and trends.
+Reporting - Tools for generating detailed reports based on data warehouse queries.
+Analysis - Capabilities for advanced data analysis and exploration.
+Power BI - Integration with Power BI for further data manipulation and visualization.
+
+4.Governance and Operations
+This layer ensures the smooth operation and security of the data warehouse. 
+Resource Monitor - Tracks and controls resource usage within Snowflake.
+Error Logs - Captures and logs errors into a separate table for troubleshooting purposes.
+User Roles - Defines access permissions for different user groups within the data warehouse.
+
+
 Data Modelling
+The approach to modeling the data using a SQL script
+
+1.Schema and database creation
+Created a warehouse named "VEHICLE_DEALER" and a database named "SALES_DB".
+Created a schema named "YEAR_03_04_05" to organize the tables for data on the years 2003, 2004, and 2005.
+
+2.Loading data as RAW
+Created a table named "RAW_DATA" within the "YEAR_03_04_05" schema to store the raw sales data.
+Created a file format to facilitate loading data from CSV files into the "RAW_DATA" table.
+Checked for missing values and logged errors.
+Detected and logged duplicate records 
+
+3.Dimensional table creation
+DIM_CUSTOMERS for customer details.
+DIM_PRODUCTS for product details.
+DIM_DATE for date-related information.
+
+4.Fact table creation
+Created a fact table named "FACT_SALES" to store sales transactions.
+Established foreign key relationships with dimensional tables to maintain data integrity.
+Clustered the table by the year of the transaction date to optimize query performance.
+
+5.View creation for easy data analysis
+Summary of total sales, orders, and customers - VW_SALES_SUMMARY
+Sales breakdown by product - VW_SALES_BY_PRODUCT
+Sales breakdown by customer - VW_SALES_BY_CUSTOMER
+Potential sales analysis using MSRP and price each - VW_POTENTIAL_SALES_USING_MSRP
+Quarterly sales analysis by region - VW_QUARTERLY_SALES_BY_REGION
+Quarterly sales revenue analysis - VW_QUARTERLY_SALES_REVENUE
+Country performance analysis by year - VW_COUNTRY_PERFORMANCE_BY_YEAR
+Sales analysis by status - VW_SALES_BY_STATUS
+
+6.Data Validation Checks
+Implemented data validation queries to identify duplicates in dimensional and fact tables, ensuring data integrity.
+
+7.Resource monitor setup and ownership
+Created a resource monitor with daily credit limits and trigger warnings to control the usage of credits
+Ownership of tables is for only account admins and organization admins
+Ownership of views is for sysadmins.
 
 
-The approach to modeling the data
-Schema and database creation
-* Created a warehouse named "VEHICLE_DEALER" and a database named "SALES_DB".
-* Created a schema named "YEAR_03_04_05" to organize the tables for data pertaining to the years 2003, 2004, and 2005.
+Entity relationship diagram 
+The Entity-Relationship Diagram (ERD) showcases the structure of the data warehouse designed for sales analysis. It consists of five tables: RAW_DATA (stores raw sales data), DIM_CUSTOMERS (unique customers), DIM_PRODUCTS (unique products), DIM_DATE (extracted dates), and FACT_SALES (integrated sales data). Dimension tables hold unique values, while the fact table has foreign keys connecting them, allowing for comprehensive sales analysis based on customers, products, dates, and other sales details.
 
 
-Loading data as RAW
-* Created a table named "RAW_DATA" within the "YEAR_03_04_05" schema to store the raw sales data.
-* Created a file format to facilitate loading data from CSV files into the "RAW_DATA" table.
-* Checked for missing values and logged errors.
-* Detected and logged duplicate records 
-
-
-Dimensional table creation
-* DIM_CUSTOMERS for customer details.
-* DIM_PRODUCTS for product details.
-* DIM_DATE for date-related information.
-
-
-Fact table creation
-* Created a fact table named "FACT_SALES" to store sales transactions.
-* Established foreign key relationships with dimensional tables to maintain data integrity.
-* Clustered the table by the year of the transaction date to optimize query performance.
-
-
-View creation for easy data analysis
-* Summary of total sales, orders, and customers - VW_SALES_SUMMARY
-* Sales breakdown by product - VW_SALES_BY_PRODUCT
-* Sales breakdown by customer - VW_SALES_BY_CUSTOMER
-* Potential sales analysis using MSRP - VW_POTENTIAL_SALES_USING_MSRP
-* Quarterly sales analysis by region - VW_QUARTERLY_SALES_BY_REGION
-* Quarterly sales revenue analysis - VW_QUARTERLY_SALES_REVENUE
-* Country performance analysis by year - VW_COUNTRY_PERFORMANCE_BY_YEAR
-* Sales analysis by status - VW_SALES_BY_STATUS
-
-
-Data Validation Checks
-* Implemented data validation queries to identify duplicates in dimensional and fact tables, ensuring data integrity.
-
-
-Resource monitor setup and ownership
-* Created a resource monitor with daily credit limits and trigger warnings to control the usage of credits
-* Ownership of tables is for only account admins and organization admins
-* Ownership of views is for sysadmins.
-
-
-Entity relationship diagram
-
-
-The Entity-Relationship Diagram (ERD) showcase the structure of the data warehouse designed for sales analysis. It consists of five tables: RAW_DATA (stores raw sales data), DIM_CUSTOMERS (unique customers), DIM_PRODUCTS (unique products), DIM_DATE (extracted dates), and FACT_SALES (integrated sales data). Dimension tables hold unique values, while the fact table has foreign keys connecting them, allowing for comprehensive sales analysis based on customers, products, dates, and other sales details.
-
-
-POWER BI dashboard on sales data
-
-
-* Sales Overview
-   * Number of orders made
-   * Minimum, maximum and average sales of all products
-* Sales by Product
-   * Sales by year for each product line
-   * Sales by product line
-   * Number of product codes in each product line
-   * Average sales price and retail price of each product line
-* Sales by Other Dimensions
-   * Sales by countries
-   * Sales by order status
+POWER BI dashboard on sales data 
+Sales Overview
+Number of orders made
+Minimum, maximum, and average sales of all products
+Sales by Product
+Sales by year for each product line
+Sales by product line
+Number of product codes in each product line
+Average sales price and retail price of each product line
+Sales by Other Dimensions
+Sales by countries
+Sales by order status

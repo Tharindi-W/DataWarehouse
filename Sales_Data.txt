@@ -21,9 +21,9 @@ This architecture can ingest data from various sources, including CSV and JSON f
 
 2.Data Processing and Storage
 This design use Snowflake as the core data warehouse platform. Snowflake provides a multi-stage approach.
-Staging - Raw data is initially landed in Snowflake's temporary storage for processing.
-Conformed Dimensions - Standardized reference data tables are created to ensure consistency across the warehouse.
-Aggregated Data - Pre-calculated summaries of detailed data are stored in Snowflake views for faster querying.
+Staging - Raw data is initially landed in Snowflake's temporary storage for processing.This could be done with external stages and different file formats.
+Conformed Dimensions - Fact tables and standardized dimensional data tables are created to ensure consistency across the warehouse.
+Aggregated Data - Summaries of detailed data are stored in Snowflake views for faster querying.
 
 3.Services
 This layer focuses on data consumption and analysis.:
